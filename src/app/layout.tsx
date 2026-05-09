@@ -1,7 +1,10 @@
+"use client";
+
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LayoutDashboard, Upload, List, Send, Settings, History } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -11,6 +14,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
+
+  if (isLoginPage) {
+    return (
+      <html lang="en">
+        <body className={cn(inter.className, "bg-gray-50 min-h-screen")}>
+          {children}
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en">
       <body className={cn(inter.className, "bg-gray-50 min-h-screen flex")}>
@@ -31,12 +47,12 @@ export default function RootLayout({
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">JD</div>
                 <div className="text-sm">
                   <p className="font-medium">John Doe</p>
-                  <button className="text-gray-500 hover:text-gray-700">Logout</button>
+                  <Link href="/login" className="text-gray-500 hover:text-gray-700 text-xs">Logout</Link>
                 </div>
              </div>
           </div>
         </aside>
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 overflow-auto">
           {children}
         </main>
       </body>
@@ -45,8 +61,17 @@ export default function RootLayout({
 }
 
 function NavItem({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
   return (
-    <Link href={href} className="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center space-x-3 p-3 rounded-lg transition-colors",
+        isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-100"
+      )}
+    >
       {icon}
       <span className="font-medium">{label}</span>
     </Link>
